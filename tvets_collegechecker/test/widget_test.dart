@@ -1,11 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:tvets_collegechecker/main.dart';
 import 'package:supabase/supabase.dart';
+import 'package:tvets_collegechecker/main.dart';
 
 // Creating a mock class for SupabaseClient using Mockito
-class MockSupabaseClient extends  implements SupabaseClient {}
+class MockSupabaseClient extends Mock implements SupabaseClient {}
 
 void main() {
   // Create a mock instance of SupabaseClient

@@ -7,13 +7,13 @@
 
 # The following line activates a set of recommended lints for Flutter apps,
 # packages, and plugins designed to encourage good coding practices.
+include: package:flutter_lints/flutter.yaml
+
 analyzer:
   errors:
     avoid_print: ignore
-    library_private_types       unused_import: ignore
- unused_import: ignore
-_in_public_api: ignore
-include: package:flutter_lints/flutter.yaml
+    library_private_types_in_public_api: ignore
+    unused_import: ignore
 
 linter:
   # The lint rules applied to this project can be customized in the

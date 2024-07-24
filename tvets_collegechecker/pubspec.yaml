@@ -10,9 +10,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  supabase: ^0.2.4
+  supabase: ^2.2.5  # Upgrade to the latest compatible version
   flutter_dotenv: ^5.0.2
-  postgrest: ^2.1.2
+  postgrest: ^2.1.2  # Keep the required version
 
   cupertino_icons: ^1.0.6
 
@@ -20,6 +20,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
+  mockito: ^5.4.4
 
 flutter:
   uses-material-design: true

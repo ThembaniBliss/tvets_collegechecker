@@ -1,3 +1,5 @@
+// ignore_for_file: use_key_in_widget_constructors, duplicate_ignore, unnecessary_cast
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase/supabase.dart';
@@ -21,6 +23,7 @@ void main() async {
 class MyApp extends StatelessWidget {
   final SupabaseClient supabaseClient;
 
+  // ignore: use_key_in_widget_constructors
   const MyApp({required this.supabaseClient});
 
   @override
@@ -54,25 +57,18 @@ class _CollegeCheckerScreenState extends State<CollegeCheckerScreen> {
           .from('colleges')
           .select()
           .eq('name', name)
-          .maybeSingle(); // This builds the query with filters
+          .maybeSingle();
 
-      if (response!.error != null) {
-        setState(() {
-          _result = 'Error: ${response!.error!.message}';
-        });
-        return;
-      }
-
-      if (response.data == null) {
+      if (response == null || response['name'] == null) {
         setState(() {
           _result = 'College not found.';
         });
-        return;
+      } else {
+        final college = response as Map<String, dynamic>;
+        setState(() {
+          _result = 'College found: ${college['name']}';
+        });
       }
-
-      setState(() {
-        _result = 'College found: ${response!.data['name']}';
-      });
     } catch (error) {
       setState(() {
         _result = 'Unexpected error: $error';
