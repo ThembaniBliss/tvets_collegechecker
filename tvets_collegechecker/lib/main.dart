@@ -1,4 +1,4 @@
-// ignore_for_file: use_key_in_widget_constructors, duplicate_ignore, unnecessary_cast
+// ignore_for_file: use_key_in_widget_constructors, duplicate_ignore, sort_child_properties_last
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -6,7 +6,7 @@ import 'package:supabase/supabase.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: ".env");
+  await dotenv.load(fileName: "assets/.env");
 
   final supabaseUrl = dotenv.env['SUPABASE_URL'];
   final supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY'];
@@ -16,24 +16,21 @@ void main() async {
   }
 
   SupabaseClient supabaseClient = SupabaseClient(supabaseUrl, supabaseAnonKey);
-
   runApp(MyApp(supabaseClient: supabaseClient));
 }
 
 class MyApp extends StatelessWidget {
   final SupabaseClient supabaseClient;
 
-  // ignore: use_key_in_widget_constructors
   const MyApp({required this.supabaseClient});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'TVET College Checker',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue),
       home: CollegeCheckerScreen(supabaseClient: supabaseClient),
+      debugShowCheckedModeBanner: false, // Removes the debug banner
     );
   }
 }
@@ -41,6 +38,7 @@ class MyApp extends StatelessWidget {
 class CollegeCheckerScreen extends StatefulWidget {
   final SupabaseClient supabaseClient;
 
+  // ignore: use_key_in_widget_constructors
   const CollegeCheckerScreen({required this.supabaseClient});
 
   @override
@@ -89,14 +87,24 @@ class _CollegeCheckerScreenState extends State<CollegeCheckerScreen> {
           children: [
             TextField(
               controller: _controller,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Enter South African TVET college name',
+                border:
+                    const OutlineInputBorder(), // Adds border to the TextField
+                fillColor: Colors.blueGrey[50],
+                filled: true,
               ),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () => checkCollege(_controller.text),
               child: const Text('Check'),
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.blue, // Text color
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+              ),
             ),
             const SizedBox(height: 20),
             Text(

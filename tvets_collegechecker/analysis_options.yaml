@@ -13,6 +13,7 @@ analyzer:
   errors:
     avoid_print: ignore
     library_private_types_in_public_api: ignore
+    unnecessary_cast: ignore
     unused_import: ignore
 
 linter:
