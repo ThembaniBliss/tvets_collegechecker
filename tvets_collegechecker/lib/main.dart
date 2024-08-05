@@ -13,6 +13,7 @@ void main() async {
     throw Exception("Supabase environment variables not found.");
   }
   SupabaseClient supabaseClient = SupabaseClient(supabaseUrl, supabaseAnonKey);
+  print('Supabase Initialized with URL: $supabaseUrl');
   runApp(MyApp(supabaseClient: supabaseClient));
 }
 
@@ -46,23 +47,20 @@ class _CollegeCheckerScreenState extends State<CollegeCheckerScreen> {
     try {
       var response = await widget.supabaseClient
           .from('colleges')
-          .select(
-              '*') // Select all columns or specify like 'name, location, website, contact'
-          .ilike('name', '%$name%') // Case-insensitive partial match
-          .execute(); // This should correctly fetch the data
+          .select('id, name, location, website,contact') // Specify columns
+          .ilike('name', '%$name%');
+      print('Response: $response');
 
-      if (response.error == null &&
-          response.data != null &&
-          response.data.isNotEmpty) {
+      if (response.isNotEmpty) {
         setState(() {
-          _results = List<Map<String, dynamic>>.from(response.data);
+          _results = List<Map<String, dynamic>>.from(response);
           _result = ''; // Clear any previous error message
         });
       } else {
         setState(() {
           _results = [];
           _result =
-              'No colleges found matching your criteria.'; // Informative message when no data is found
+              'colleges  not found.'; // Informative message when no data is found
         });
       }
     } catch (error) {
@@ -72,6 +70,22 @@ class _CollegeCheckerScreenState extends State<CollegeCheckerScreen> {
             'Unexpected error: $error'; // Error message when there is an exception
       });
     }
+  }
+
+  Future<void> checkConnection() async {
+    try {
+      var response =
+          await widget.supabaseClient.from('colleges').select().limit(1);
+      print('Connection check response: $response');
+    } catch (error) {
+      print('Connection check error: $error');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    checkConnection(); // Call the method to check connection on init
   }
 
   @override
