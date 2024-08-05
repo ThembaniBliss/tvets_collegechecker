@@ -47,8 +47,10 @@ class _CollegeCheckerScreenState extends State<CollegeCheckerScreen> {
     try {
       var response = await widget.supabaseClient
           .from('colleges')
-          .select('id, name, location, website,contact') // Specify columns
+          .select('name, location, website, contact')
           .ilike('name', '%$name%');
+      //.ilike('name', '%$name%');
+      //Debugging print statements
       print('Response: $response');
 
       if (response.isNotEmpty) {
@@ -69,6 +71,7 @@ class _CollegeCheckerScreenState extends State<CollegeCheckerScreen> {
         _result =
             'Unexpected error: $error'; // Error message when there is an exception
       });
+      print('Error: $error');
     }
   }
 
