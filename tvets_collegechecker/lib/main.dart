@@ -22,6 +22,7 @@ void main() async {
   await Supabase.initialize(
     url: supabaseUrl,
     anonKey: supabaseAnonKey,
+    //localStorage: const LocalStorage(),
     //authFlowType: AuthFlowType.pkce, // Ensure PKCE flow is enabled for web
   );
   runApp(MyApp(supabaseClient: supabaseClient));
