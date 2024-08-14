@@ -13,6 +13,7 @@ analyzer:
   errors:
     avoid_print: ignore
     library_private_types_in_public_api: ignore
+    sort_child_properties_last: ignore
     unnecessary_cast: ignore
     unused_import: ignore
 

@@ -17,6 +17,7 @@ dependencies:
 
 
   cupertino_icons: ^1.0.6
+  supabase_flutter: ^2.6.0
 
 dev_dependencies:
   flutter_test:
