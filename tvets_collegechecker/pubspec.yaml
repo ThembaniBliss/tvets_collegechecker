@@ -14,7 +14,7 @@ dependencies:
   flutter_dotenv: ^5.0.2
   postgrest: ^2.1.4  # Keep the required version
   provider: ^6.0.3
-  supabase_flutter: 2.6.0
+  supabase_flutter: ^2.6.0
 
 
   cupertino_icons: ^1.0.6

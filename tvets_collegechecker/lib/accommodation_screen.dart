@@ -17,9 +17,9 @@ class _AccommodationScreenState extends State<AccommodationScreen> {
   Future<void> searchAccommodations(String name) async {
     try {
       var response = await widget.supabaseClient
-          .from('accommodations')
+          .from('accommodationproviders')
           .select(
-              'name, location, address, contactNumbers, email, website, distanceFromHatfield')
+              'name, location, address, contactnumbers, email, website, distancefromhatfield')
           .ilike('name', '%$name%');
       print('Response: $response');
 
