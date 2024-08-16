@@ -32,7 +32,7 @@ class _CollegeCheckerScreenState extends State<CollegeCheckerScreen> {
         setState(() {
           _results = [];
           _result =
-              'colleges  not found.'; // Informative message when no data is found
+              'No colleges found matching your search.'; // Informative message when no data is found
         });
       }
     } catch (error) {
@@ -65,53 +65,103 @@ class _CollegeCheckerScreenState extends State<CollegeCheckerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.blueAccent,
         title: const Text('TVET College Checker'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _controller,
-              decoration: InputDecoration(
-                labelText: 'Enter South African TVET college name',
-                border: const OutlineInputBorder(),
-                fillColor: Colors.blueGrey[50],
-                filled: true,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.blueAccent, Colors.white, Colors.greenAccent],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text(
+                'Please enter a TVET College name to search:',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+                textAlign: TextAlign.center,
               ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () => searchColleges(_controller.text),
-              // ignore: sort_child_properties_last
-              child: const Text('Search'),
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: Colors.blue,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+              const SizedBox(height: 20),
+              TextField(
+                controller: _controller,
+                decoration: const InputDecoration(
+                  labelText: 'Enter South African TVET college name',
+                  labelStyle: TextStyle(color: Colors.black54),
+                  border: OutlineInputBorder(),
+                  fillColor: Colors.white70,
+                  filled: true,
+                  focusedBorder: OutlineInputBorder(
+                    // ignore: unnecessary_const
+                    borderSide:
+                        // ignore: unnecessary_const
+                        const BorderSide(color: Colors.blueAccent, width: 2.0),
+                  ),
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _results.length,
-                itemBuilder: (context, index) {
-                  final college = _results[index];
-                  return ListTile(
-                    title: Text(college['name']),
-                    subtitle: Text(
-                        'Location: ${college['location']}\nWebsite: ${college['website']}\nContact: ${college['contact']}'),
-                  );
-                },
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () => searchColleges(_controller.text),
+                child: const Text('Search'),
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.green,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  textStyle: const TextStyle(fontSize: 18),
+                ),
               ),
-            ),
-            Text(
-              _result, // Display the result message here
-              style: const TextStyle(color: Colors.red, fontSize: 16),
-            ),
-          ],
+              const SizedBox(height: 20),
+              Expanded(
+                child: _results.isNotEmpty
+                    ? ListView.builder(
+                        itemCount: _results.length,
+                        itemBuilder: (context, index) {
+                          final college = _results[index];
+                          return Card(
+                            elevation: 3,
+                            margin: const EdgeInsets.symmetric(vertical: 10),
+                            child: ListTile(
+                              title: Text(
+                                college['name'],
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blueAccent,
+                                ),
+                              ),
+                              subtitle: Text(
+                                'Location: ${college['location']}\nWebsite: ${college['website']}\nContact: ${college['contact']}',
+                                style: const TextStyle(color: Colors.black87),
+                              ),
+                              isThreeLine: true,
+                            ),
+                          );
+                        },
+                      )
+                    : Center(
+                        child: Text(
+                          _result,
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
+              ),
+            ],
+          ),
         ),
       ),
     );

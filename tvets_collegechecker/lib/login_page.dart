@@ -93,75 +93,108 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_isSignUp ? 'Sign Up' : 'Login'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _emailController,
-              decoration: InputDecoration(
-                labelText: 'Email',
-                border: const OutlineInputBorder(),
-                fillColor: Colors.blueGrey[50],
-                filled: true,
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(height: 80),
+              // App Logo or Title
+              Icon(
+                Icons.school,
+                size: 100,
+                color: Colors.blue.shade700,
               ),
-              keyboardType: TextInputType.emailAddress,
-            ),
-            const SizedBox(height: 20),
-            TextField(
-              controller: _passwordController,
-              decoration: InputDecoration(
-                labelText: 'Password',
-                border: const OutlineInputBorder(),
-                fillColor: Colors.blueGrey[50],
-                filled: true,
-              ),
-              obscureText: true,
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _isLoading
-                  ? null
-                  : _signInOrSignUp, // Disable button during loading
-              // ignore: sort_child_properties_last
-              child: _isLoading
-                  ? const CircularProgressIndicator(
-                      color: Colors.white,
-                    )
-                  : Text(_isSignUp ? 'Sign Up' : 'Sign In'),
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: _isLoading ? Colors.grey : Colors.blue,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-              ),
-            ),
-            const SizedBox(height: 20),
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  _isSignUp = !_isSignUp;
-                });
-              },
-              child: Text(
-                _isSignUp
-                    ? 'Already have an account? Sign In'
-                    : "Don't have an account? Sign Up",
-                style: const TextStyle(color: Colors.blue),
-              ),
-            ),
-            if (_errorMessage.isNotEmpty) ...[
               const SizedBox(height: 20),
               Text(
-                _errorMessage,
-                style: const TextStyle(color: Colors.red),
+                _isSignUp ? 'Sign Up' : 'Login',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue.shade700,
+                ),
               ),
+              const SizedBox(height: 40),
+              // Email TextField
+              TextField(
+                controller: _emailController,
+                decoration: InputDecoration(
+                  labelText: 'Email',
+                  labelStyle: TextStyle(color: Colors.blue.shade700),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: BorderSide(color: Colors.blue.shade700),
+                  ),
+                  fillColor: Colors.blueGrey[50],
+                  filled: true,
+                ),
+                keyboardType: TextInputType.emailAddress,
+              ),
+              const SizedBox(height: 20),
+              // Password TextField
+              TextField(
+                controller: _passwordController,
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  labelStyle: TextStyle(color: Colors.blue.shade700),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: BorderSide(color: Colors.blue.shade700),
+                  ),
+                  fillColor: Colors.blueGrey[50],
+                  filled: true,
+                ),
+                obscureText: true,
+              ),
+              const SizedBox(height: 20),
+              // Sign In / Sign Up Button
+              ElevatedButton(
+                onPressed: _isLoading ? null : _signInOrSignUp,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: _isLoading ? Colors.grey : Colors.green,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
+                child: _isLoading
+                    ? const CircularProgressIndicator(
+                        color: Colors.white,
+                      )
+                    : Text(
+                        _isSignUp ? 'Sign Up' : 'Sign In',
+                        style: const TextStyle(fontSize: 18),
+                      ),
+              ),
+              const SizedBox(height: 20),
+              // Toggle between Sign In / Sign Up
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _isSignUp = !_isSignUp;
+                  });
+                },
+                child: Text(
+                  _isSignUp
+                      ? 'Already have an account? Sign In'
+                      : "Don't have an account? Sign Up",
+                  style: const TextStyle(color: Colors.blue, fontSize: 16),
+                ),
+              ),
+              // Error Message
+              if (_errorMessage.isNotEmpty) ...[
+                const SizedBox(height: 20),
+                Text(
+                  _errorMessage,
+                  style: const TextStyle(color: Colors.red, fontSize: 16),
+                ),
+              ],
+              const SizedBox(height: 40),
             ],
-          ],
+          ),
         ),
       ),
     );

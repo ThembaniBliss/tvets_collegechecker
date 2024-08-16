@@ -31,7 +31,7 @@ class _AccommodationScreenState extends State<AccommodationScreen> {
       } else {
         setState(() {
           _results = [];
-          _result = 'Accommodation providers not found.';
+          _result = 'No accommodation providers found.';
         });
       }
     } catch (error) {
@@ -46,53 +46,107 @@ class _AccommodationScreenState extends State<AccommodationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.blue,
         title: const Text('Accommodation Providers'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _controller,
-              decoration: InputDecoration(
-                labelText: 'Enter accommodation provider name',
-                border: const OutlineInputBorder(),
-                fillColor: Colors.blueGrey[50],
-                filled: true,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.greenAccent, Colors.white, Colors.blueAccent],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text(
+                'Please enter an accommodation provider name to search:',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueAccent,
+                ),
+                textAlign: TextAlign.center,
               ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () => searchAccommodations(_controller.text),
-              // ignore: sort_child_properties_last
-              child: const Text('Search'),
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: Colors.green,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+              const SizedBox(height: 20),
+              TextField(
+                controller: _controller,
+                decoration: const InputDecoration(
+                  labelText: 'Enter accommodation provider name',
+                  labelStyle: TextStyle(color: Colors.blueAccent),
+                  border: OutlineInputBorder(),
+                  fillColor: Colors.white,
+                  filled: true,
+                  focusedBorder: OutlineInputBorder(
+                    borderSide:
+                        BorderSide(color: Colors.greenAccent, width: 2.0),
+                  ),
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _results.length,
-                itemBuilder: (context, index) {
-                  final accommodation = _results[index];
-                  return ListTile(
-                    title: Text(accommodation['name']),
-                    subtitle: Text(
-                        'Location: ${accommodation['location']}\nAddress: ${accommodation['address']}\nContact: ${accommodation['contactNumbers']}\nEmail: ${accommodation['email']}\nWebsite: ${accommodation['website']}\nDistance from Hatfield: ${accommodation['distanceFromHatfield']} km'),
-                  );
-                },
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () => searchAccommodations(_controller.text),
+                child: const Text('Search'),
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.blueAccent,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  textStyle: const TextStyle(fontSize: 18),
+                ),
               ),
-            ),
-            Text(
-              _result,
-              style: const TextStyle(color: Colors.red, fontSize: 16),
-            ),
-          ],
+              const SizedBox(height: 20),
+              Expanded(
+                child: _results.isNotEmpty
+                    ? ListView.builder(
+                        itemCount: _results.length,
+                        itemBuilder: (context, index) {
+                          final accommodation = _results[index];
+                          return Card(
+                            elevation: 3,
+                            margin: const EdgeInsets.symmetric(vertical: 10),
+                            child: ListTile(
+                              title: Text(
+                                accommodation['name'],
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.greenAccent,
+                                ),
+                              ),
+                              subtitle: Text(
+                                'Location: ${accommodation['location']}\n'
+                                'Address: ${accommodation['address']}\n'
+                                'Contact: ${accommodation['contactnumbers']}\n'
+                                'Email: ${accommodation['email']}\n'
+                                'Website: ${accommodation['website']}\n'
+                                'Distance from Hatfield: ${accommodation['distancefromhatfield']} km',
+                                style:
+                                    const TextStyle(color: Colors.blueAccent),
+                              ),
+                              isThreeLine: true,
+                            ),
+                          );
+                        },
+                      )
+                    : Center(
+                        child: Text(
+                          _result,
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
+              ),
+            ],
+          ),
         ),
       ),
     );
