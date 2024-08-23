@@ -1,4 +1,3 @@
-// ignore_for_file: sort_child_properties_las
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -15,17 +14,14 @@ void main() async {
   if (supabaseUrl == null || supabaseAnonKey == null) {
     throw Exception("Supabase environment variables not found.");
   }
-  SupabaseClient supabaseClient = SupabaseClient(supabaseUrl, supabaseAnonKey);
-  print('Supabase Initialized with URL: $supabaseUrl');
 
-  // Initialize Supabase with the necessary settings
+  // Initialize Supabase
   await Supabase.initialize(
     url: supabaseUrl,
     anonKey: supabaseAnonKey,
-    //localStorage: const LocalStorage(),
-    //authFlowType: AuthFlowType.pkce, // Ensure PKCE flow is enabled for web
   );
-  runApp(MyApp(supabaseClient: supabaseClient));
+
+  runApp(MyApp(supabaseClient: Supabase.instance.client));
 }
 
 class MyApp extends StatelessWidget {
@@ -35,7 +31,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'College and Accomodation checker ',
+      title: 'College and Accommodation Checker',
       theme: ThemeData(primarySwatch: Colors.blue),
       home: LoginPage(supabaseClient: supabaseClient),
       debugShowCheckedModeBanner: false,

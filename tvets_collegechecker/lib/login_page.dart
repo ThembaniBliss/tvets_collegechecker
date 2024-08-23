@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase/supabase.dart';
 
 import 'home_page.dart';
+import 'registration_page.dart'; // Import the RegistrationPage
 
 class LoginPage extends StatefulWidget {
   final SupabaseClient supabaseClient;
@@ -16,9 +17,9 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   String _errorMessage = '';
   bool _isLoading = false;
-  bool _isSignUp = false; // Track whether the user is signing up or signing in
+  bool isLoginSelected = true;
 
-  Future<void> _signInOrSignUp() async {
+  Future<void> _signIn() async {
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
 
@@ -35,49 +36,26 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     try {
-      if (_isSignUp) {
-        // Sign up (register)
-        final response = await widget.supabaseClient.auth.signUp(
-          email: email,
-          password: password,
-        );
+      final response = await widget.supabaseClient.auth.signInWithPassword(
+        email: email,
+        password: password,
+      );
 
-        if (response.session != null) {
-          Navigator.pushReplacement(
-            // ignore: use_build_context_synchronously
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  HomePage(supabaseClient: widget.supabaseClient),
-            ),
-          );
-        } else {
-          setState(() {
-            _errorMessage = 'Registration failed. Please try again.';
-          });
-        }
+      if (response.session != null) {
+        // ignore: use_build_context_synchronously
+        Navigator.pushReplacement(
+          // ignore: use_build_context_synchronously
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                HomePage(supabaseClient: widget.supabaseClient),
+          ),
+        );
       } else {
-        // Sign in (login)
-        final response = await widget.supabaseClient.auth.signInWithPassword(
-          email: email,
-          password: password,
-        );
-
-        if (response.session != null) {
-          Navigator.pushReplacement(
-            // ignore: use_build_context_synchronously
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  HomePage(supabaseClient: widget.supabaseClient),
-            ),
-          );
-        } else {
-          setState(() {
-            _errorMessage =
-                'Login failed. Please check your credentials and try again.';
-          });
-        }
+        setState(() {
+          _errorMessage =
+              'Login failed. Please check your credentials and try again.';
+        });
       }
     } catch (error) {
       setState(() {
@@ -94,106 +72,190 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(height: 80),
-              // App Logo or Title
-              Icon(
-                Icons.school,
-                size: 100,
-                color: Colors.blue.shade700,
-              ),
-              const SizedBox(height: 20),
-              Text(
-                _isSignUp ? 'Sign Up' : 'Login',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue.shade700,
-                ),
-              ),
-              const SizedBox(height: 40),
-              // Email TextField
-              TextField(
-                controller: _emailController,
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                  labelStyle: TextStyle(color: Colors.blue.shade700),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: BorderSide(color: Colors.blue.shade700),
-                  ),
-                  fillColor: Colors.blueGrey[50],
-                  filled: true,
-                ),
-                keyboardType: TextInputType.emailAddress,
-              ),
-              const SizedBox(height: 20),
-              // Password TextField
-              TextField(
-                controller: _passwordController,
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  labelStyle: TextStyle(color: Colors.blue.shade700),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: BorderSide(color: Colors.blue.shade700),
-                  ),
-                  fillColor: Colors.blueGrey[50],
-                  filled: true,
-                ),
-                obscureText: true,
-              ),
-              const SizedBox(height: 20),
-              // Sign In / Sign Up Button
-              ElevatedButton(
-                onPressed: _isLoading ? null : _signInOrSignUp,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: _isLoading ? Colors.grey : Colors.green,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                ),
-                child: _isLoading
-                    ? const CircularProgressIndicator(
-                        color: Colors.white,
-                      )
-                    : Text(
-                        _isSignUp ? 'Sign Up' : 'Sign In',
-                        style: const TextStyle(fontSize: 18),
-                      ),
-              ),
-              const SizedBox(height: 20),
-              // Toggle between Sign In / Sign Up
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _isSignUp = !_isSignUp;
-                  });
-                },
-                child: Text(
-                  _isSignUp
-                      ? 'Already have an account? Sign In'
-                      : "Don't have an account? Sign Up",
-                  style: const TextStyle(color: Colors.blue, fontSize: 16),
-                ),
-              ),
-              // Error Message
-              if (_errorMessage.isNotEmpty) ...[
-                const SizedBox(height: 20),
-                Text(
-                  _errorMessage,
-                  style: const TextStyle(color: Colors.red, fontSize: 16),
+      body: Center(
+        child: SingleChildScrollView(
+          child: Container(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+            margin: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16.0),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 10.0,
+                  spreadRadius: 5.0,
+                  offset: Offset(0, 5),
                 ),
               ],
-              const SizedBox(height: 40),
-            ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(height: 20),
+                const Text(
+                  'Login Form',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isLoginSelected = true;
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 12.0),
+                          decoration: BoxDecoration(
+                            gradient: isLoginSelected
+                                ? const LinearGradient(
+                                    colors: [Colors.blue, Colors.blueAccent],
+                                  )
+                                : null,
+                            color: isLoginSelected ? null : Colors.grey[200],
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          child: const Center(
+                            child: Text(
+                              'Login',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isLoginSelected = false;
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => RegistrationPage(
+                                    supabaseClient: widget.supabaseClient),
+                              ),
+                            );
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 12.0),
+                          decoration: BoxDecoration(
+                            color: !isLoginSelected ? Colors.grey[200] : null,
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          child: const Center(
+                            child: Text(
+                              'Signup',
+                              style: TextStyle(
+                                color: Colors.black87,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                TextField(
+                  controller: _emailController,
+                  decoration: InputDecoration(
+                    labelText: 'Email Address',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    fillColor: Colors.grey[200],
+                    filled: true,
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                ),
+                const SizedBox(height: 20),
+                TextField(
+                  controller: _passwordController,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    fillColor: Colors.grey[200],
+                    filled: true,
+                  ),
+                  obscureText: true,
+                ),
+                const SizedBox(height: 10),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () {},
+                    child: const Text(
+                      'Forgot password?',
+                      style: TextStyle(color: Colors.blue),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: _isLoading ? null : _signIn,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 50, vertical: 15),
+                    backgroundColor: Colors.blue,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                  child: _isLoading
+                      ? const CircularProgressIndicator(
+                          color: Colors.white,
+                        )
+                      : const Text(
+                          'Login',
+                          style: TextStyle(fontSize: 18),
+                        ),
+                ),
+                const SizedBox(height: 20),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => RegistrationPage(
+                            supabaseClient: widget.supabaseClient),
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    "Not a member? Signup now",
+                    style: TextStyle(color: Colors.blue, fontSize: 16),
+                  ),
+                ),
+                if (_errorMessage.isNotEmpty) ...[
+                  const SizedBox(height: 20),
+                  Text(
+                    _errorMessage,
+                    style: const TextStyle(color: Colors.red, fontSize: 16),
+                  ),
+                ],
+              ],
+            ),
           ),
         ),
       ),
