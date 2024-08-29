@@ -11,6 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   supabase: ^2.3.0  # Upgrade to the latest compatible version
+  image_picker: ^0.8.4+11
   flutter_dotenv: ^5.0.2
   postgrest: ^2.1.4  # Keep the required version
   provider: ^6.0.3
