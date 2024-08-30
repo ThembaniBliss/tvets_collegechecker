@@ -20,7 +20,7 @@ class _AccommodationScreenState extends State<AccommodationScreen> {
     try {
       var response = await widget.supabaseClient
           .from('accommodationproviders')
-          .select('id, name, location, website, image_url') // include image_url
+          .select('id, name, location, website, image_url')
           .ilike('name', '%$name%');
 
       if (response.isNotEmpty) {
@@ -48,16 +48,18 @@ class _AccommodationScreenState extends State<AccommodationScreen> {
           await widget.supabaseClient.from('accommodation_comments').insert({
         'accommodation_id': accommodationId,
         'comment': comment,
+        'created_at': DateTime.now().toIso8601String(), // Add timestamp
       });
 
-      if (response.isNotEmpty) {
+      if (response.error != null) {
         setState(() {
-          _commentResult = 'Comment submitted successfully!';
-          _commentController.clear();
+          _commentResult =
+              'Failed to submit comment: ${response.error!.message}';
         });
       } else {
         setState(() {
-          _commentResult = 'Failed to submit comment.';
+          _commentResult = 'Comment submitted successfully!';
+          _commentController.clear();
         });
       }
     } catch (error) {
@@ -73,19 +75,14 @@ class _AccommodationScreenState extends State<AccommodationScreen> {
       appBar: AppBar(
         backgroundColor: Colors.blue,
         title: const Text('Accommodation Listings'),
+        centerTitle: true,
+        elevation: 0,
       ),
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.greenAccent, Colors.white, Colors.blueAccent],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
+        color: Colors.white,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Text(
@@ -100,15 +97,19 @@ class _AccommodationScreenState extends State<AccommodationScreen> {
               const SizedBox(height: 20),
               TextField(
                 controller: _searchController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Enter accommodation provider name',
-                  labelStyle: TextStyle(color: Colors.blueAccent),
-                  border: OutlineInputBorder(),
+                  labelStyle: const TextStyle(color: Colors.blueAccent),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: Colors.blueAccent),
+                  ),
                   fillColor: Colors.white,
                   filled: true,
                   focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
                     borderSide:
-                        BorderSide(color: Colors.greenAccent, width: 2.0),
+                        const BorderSide(color: Colors.greenAccent, width: 2.0),
                   ),
                 ),
               ),
@@ -122,96 +123,85 @@ class _AccommodationScreenState extends State<AccommodationScreen> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   textStyle: const TextStyle(fontSize: 18),
                 ),
               ),
               const SizedBox(height: 20),
               Expanded(
-                child: _accommodationResults.isNotEmpty
+                child: (_accommodationResults != null &&
+                        _accommodationResults.isNotEmpty)
                     ? ListView.builder(
                         itemCount: _accommodationResults.length,
                         itemBuilder: (context, index) {
                           final accommodation = _accommodationResults[index];
                           return Card(
-                            elevation: 3,
+                            elevation: 4,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                             margin: const EdgeInsets.symmetric(vertical: 10),
-                            child: Column(
-                              children: [
-                                ListTile(
-                                  title: Text(
-                                    accommodation['name'],
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.greenAccent,
-                                    ),
-                                  ),
-                                  subtitle: Text(
-                                    'Location: ${accommodation['location']}\n'
-                                    'Website: ${accommodation['website']}',
-                                    style: const TextStyle(
-                                        color: Colors.blueAccent),
-                                  ),
-                                  isThreeLine: true,
-                                  leading: accommodation['image_url'] != null
-                                      ? Image.network(
-                                          accommodation['image_url'],
-                                          width: 50,
-                                          height: 50,
-                                          fit: BoxFit.cover,
-                                        )
-                                      : const Icon(Icons.image_not_supported),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      TextField(
-                                        controller: _commentController,
-                                        decoration: const InputDecoration(
-                                          labelText: 'Leave a comment',
-                                          border: OutlineInputBorder(),
-                                          fillColor: Colors.white,
-                                          filled: true,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 10),
-                                      ElevatedButton(
-                                        onPressed: () => submitComment(
-                                            _commentController.text,
-                                            accommodation['id']),
-                                        child: const Text('Submit Comment'),
-                                        style: ElevatedButton.styleFrom(
-                                          foregroundColor: Colors.white,
-                                          backgroundColor: Colors.blueAccent,
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 30, vertical: 15),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(30),
-                                          ),
-                                          textStyle:
-                                              const TextStyle(fontSize: 18),
-                                        ),
-                                      ),
-                                      if (_commentResult.isNotEmpty)
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 8.0),
-                                          child: Text(
-                                            _commentResult,
-                                            style: const TextStyle(
-                                              color: Colors.green,
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    child: accommodation['image_url'] != null
+                                        ? Image.network(
+                                            accommodation['image_url'],
+                                            width: 150,
+                                            height: 150,
+                                            fit: BoxFit.cover,
+                                          )
+                                        : Container(
+                                            width: 150,
+                                            height: 150,
+                                            color: Colors.grey[300],
+                                            child: const Icon(
+                                              Icons.image_not_supported,
+                                              color: Colors.grey,
+                                              size: 60,
                                             ),
                                           ),
-                                        ),
-                                    ],
                                   ),
-                                ),
-                              ],
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          accommodation['name'],
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.greenAccent,
+                                            fontSize: 20,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Text(
+                                          'Location: ${accommodation['location']}',
+                                          style: const TextStyle(
+                                            color: Colors.blueAccent,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Text(
+                                          'Website: ${accommodation['website']}',
+                                          style: const TextStyle(
+                                            color: Colors.blueAccent,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           );
                         },
@@ -226,6 +216,52 @@ class _AccommodationScreenState extends State<AccommodationScreen> {
                         ),
                       ),
               ),
+              const SizedBox(height: 20),
+              TextField(
+                controller: _commentController,
+                decoration: InputDecoration(
+                  labelText: 'Leave a comment',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: Colors.blueAccent),
+                  ),
+                  fillColor: Colors.white,
+                  filled: true,
+                ),
+              ),
+              const SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: () {
+                  if (_accommodationResults != null &&
+                      _accommodationResults.isNotEmpty) {
+                    submitComment(
+                      _commentController.text,
+                      _accommodationResults.first['id'],
+                    );
+                  }
+                },
+                child: const Text('Submit Comment'),
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.blueAccent,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  textStyle: const TextStyle(fontSize: 18),
+                ),
+              ),
+              if (_commentResult.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Text(
+                    _commentResult,
+                    style: const TextStyle(
+                      color: Colors.green,
+                    ),
+                  ),
+                ),
             ],
           ),
         ),
