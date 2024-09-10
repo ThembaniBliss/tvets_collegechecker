@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase/supabase.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show SupabaseClient;
 
 import 'home_page.dart';
 import 'registration_page.dart'; // Import the RegistrationPage
